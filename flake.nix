@@ -32,7 +32,8 @@
         kernelPatches = pkgs.linux_latest.kernelPatches ++ customPatches;
         
         structuredExtraConfig = with pkgs.lib.kernel; {
-          SCHED_BORE = yes;
+          CONFIG_SCHED_BORE ="y";
+          CONFIG_FB_EFI = "y";
         };
       };
 
