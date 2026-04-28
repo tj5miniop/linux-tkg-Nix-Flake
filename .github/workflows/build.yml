@@ -25,19 +25,6 @@ jobs:
       - name: Build Linux Kernel
         run: nix build . --print-build-logs # For debug
 
-      - name: Check Patches # Only run if there's a failure in the build
-        if: failure()
-        run: |
-          # Get the derivation path from the failure from the log
-          LOG_PATH=$(nix log . 2>&1 | grep -o '/nix/store/.*\.drv' | tail -n 1)
-          
-          if [ -n "$LOG_PATH" ]; then
-            echo "::error::Patching failed in $LOG_PATH"
-            nix log "$LOG_PATH" | grep -C 10 "FAILED" || nix log "$LOG_PATH" | tail -n 100
-          else
-            echo "::warning::Could not locate specific derivation log."
-          fi
-
       - name: Commit changes
         if: success()
         uses: stefanzweifel/git-auto-commit-action@v5
