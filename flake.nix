@@ -24,8 +24,12 @@
           {
             name = "bore-scheduler";
             patch = ./patches/0001-bore-cachy.patch;
+          }
+          {
             name = "Cachy BORE";
             patch = "./patches/0001-bore.patch";
+          }
+          {
             name = "Cgroup-VRAM";
             patch "./patches/001-cgroup-vram.patch";
           }
