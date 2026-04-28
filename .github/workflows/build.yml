@@ -16,7 +16,7 @@ jobs:
 
       - uses: cachix/cachix-action@v14
         with:
-          name: kernel-tkg-nixos # Repo Name
+          name: linux-tkg-tj5miniop # Repo Name for Cachix
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Update Flake
