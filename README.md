@@ -8,3 +8,17 @@
 * Nobara Kernel Patches
 * OGC Kernel Repo
 * Linux TKG Repository
+
+
+## How to use 
+
+# Import to Flake.nix (reccomended) (WIP)
+
+
+
+
+
+
+## Kernel Overview 
+
+# A "port" of Linux-Tkg for NixOS (more specifically my configuration)

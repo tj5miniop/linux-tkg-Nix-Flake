@@ -1,5 +1,5 @@
 {
-  description = "Latest Linux Kernel built with patches from TKG, Nobara, OGC & CachyOS";
+  description = "Linux-TKG Kernel Flake with BORE & CachyOS patches";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -10,36 +10,44 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
-      patchDir = ./patches;
-      
-      customPatches = let
-      # Filter so then only *.patch files show up
-        files = builtins.attrNames (pkgs.lib.filterAttrs 
-          (name: type: type == "regular" && pkgs.lib.hasSuffix ".patch" name) 
-          (builtins.readDir patchDir));
-      in map (file: {
-        name = file;
-        patch = "${patchDir}/${file}";
-      }) files;
-
-      # use latest kernel
       tkgKernel = pkgs.linux_latest.override {
-        # allow the kernel to be called "linux-tkg" - this allows for easier setting in 
-        argsOverride = {
+        argsOverride = rec {
           name = "linux-tkg";
+          version = "7.0.2";
+          src = pkgs.fetchurl {
+            url = "https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-${version}.tar.xz";
+            sha256 = "sha256-53591a03294527a48ccb0b9e559e922df8a38554745a1206827ca751d2ca7662=";
+          };
         };
 
-        kernelPatches = pkgs.linux_latest.kernelPatches ++ customPatches;
+        kernelPatches = [
+          {
+            name = "bore-scheduler";
+            patch = ./patches/0001-bore-cachy.patch;
+          }
+          {
+            name = "Cachy BORE";
+            patch = "./patches/0001-bore.patch";
+          }
+          {
+            name = "Cgroup-VRAM";
+            patch "./patches/001-cgroup-vram.patch";
+          }
+          # Add further patches manually to ensure strict application order
+        ];
 
+        structuredExtraConfig = with pkgs.lib.kernel; {
+          SCHED_BORE = yes;
+          SCHED_AUTOGROUP = no;
+        };
+
+        ignoreConfigErrors = true;
       };
 
     in {
-      # The package exported by the flake
       packages.${system}.default = tkgKernel;
 
-      # Add the Nix Overlay
       overlays.default = final: prev: {
-        # wrap the kernel derivation into NixOS-compatible kernel packages
         linuxPackages_tkg = prev.linuxPackagesFor tkgKernel;
       };
     };
