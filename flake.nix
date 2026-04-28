@@ -1,49 +1,54 @@
 {
-  description = "Automatically patched Linux kernel using TKG patches";
+  description = "Latest Linux Kernel built with patches from TKG, Nobara, OGC & CachyOS";
+
+# NOTE - the basis of this code has been AI Generated using Gemini - I am a beginner in Nix so I needed a base that I could work from
+# NOTE - This is a rewrite I have made of the original, keeping syntax and everything the same
+
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # Your Linux-tkg fork
-    patch-source = {
-      url = "tj5miniop/linux-tkg";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, patch-source }:
+  outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs { inherit system; };
 
-      # Use the linux 7.0 patchest from the tkg kernel 
-      patchFolder = "${patch-source}/linux-tkg-patches/7.0";
-
-      # Use all patches from Folder
+      patchDir = ./patches;
+      
       customPatches = let
-        patchFiles = builtins.attrNames (pkgs.lib.filterAttrs 
+      # Filter so then only *.patch files show up
+        files = builtins.attrNames (pkgs.lib.filterAttrs 
           (name: type: type == "regular" && pkgs.lib.hasSuffix ".patch" name) 
-          (builtins.readDir patchFolder));
+          (builtins.readDir patchDir));
       in map (file: {
         name = file;
-        patch = "${patchFolder}/${file}";
-      }) patchFiles;
+        patch = "${patchDir}/${file}";
+      }) files;
 
-    in {
-      packages.${system}.customKernel = pkgs.linux_latest.override {
+      # use latest kernel
+      tkgKernel = pkgs.linux_latest.override {
+        # allow the kernel to be called "linux-tkg" - this allows for easier setting in 
         argsOverride = {
-          # Combine Patches
-          kernelPatches = pkgs.linux_latest.kernelPatches ++ customPatches;
+          name = "linux-tkg";
+        };
 
-          # Extra Patches/Configuration - will attempt to align with tkg later
-          extraConfig = ''
-            O3 y
-            SCHED_ALT y
-          '';
+        kernelPatches = pkgs.linux_latest.kernelPatches ++ customPatches;
+        
+        structuredExtraConfig = with pkgs.lib.kernel; {
+          O3 = yes;
+          SCHED_ALT = yes;
         };
       };
 
+    in {
+      # The package exported by the flake
+      packages.${system}.default = tkgKernel;
+
+      # Add the Nix Overlay
       overlays.default = final: prev: {
-        linuxPackages_custom = prev.recurseIntoAttrs (prev.linuxPackagesFor self.packages.${system}.customKernel);
+        # wrap the kernel derivation into NixOS-compatible kernel packages
+        linuxPackages_tkg = prev.linuxPackagesFor tkgKernel;
       };
     };
 }
