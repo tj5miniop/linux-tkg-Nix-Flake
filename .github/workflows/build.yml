@@ -1,0 +1,20 @@
+name: Update and Build
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight
+  workflow_dispatch:
+
+jobs:
+  update-flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v25
+      - name: Update Flake
+        run: nix flake update
+      - name: Build Kernel
+        run: nix build .#customKernel
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: (Automated) update kernel and patches"
