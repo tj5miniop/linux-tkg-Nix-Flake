@@ -33,7 +33,6 @@
         
         structuredExtraConfig = with pkgs.lib.kernel; {
           CONFIG_SCHED_BORE ="y";
-          CONFIG_FB_EFI = "y";
         };
       };
 
