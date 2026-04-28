@@ -16,14 +16,18 @@
           version = "7.0.2";
           src = pkgs.fetchurl {
             url = "https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-${version}.tar.xz";
-            sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+            sha256 = "sha256-53591a03294527a48ccb0b9e559e922df8a38554745a1206827ca751d2ca7662=";
           };
         };
 
         kernelPatches = [
           {
             name = "bore-scheduler";
-            patch = ./patches/01-bore.patch;
+            patch = ./patches/0001-bore-cachy.patch;
+            name = "Cachy BORE"
+            patch = "./patches/0001-bore.patch"
+            name = "Cgroup-VRAM"
+            patch "./patches/001-cgroup-vram.patch"
           }
           # Add further patches manually to ensure strict application order
         ];
