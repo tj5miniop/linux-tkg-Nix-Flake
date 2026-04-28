@@ -36,8 +36,7 @@
         kernelPatches = pkgs.linux_latest.kernelPatches ++ customPatches;
         
         structuredExtraConfig = with pkgs.lib.kernel; {
-          O3 = yes;
-          SCHED_ALT = yes;
+          SCHED_BORE = yes;
         };
       };
 
