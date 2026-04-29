@@ -47,7 +47,7 @@
           PREEMPT_DYNAMIC = kernel.yes;
           HZ_1000 = kernel.yes; #Tick Rate - Similar to TKG kernel config
           HZ = kernel.freeform "1000";
-          NO_HZ_IDLE = kernel.yes
+          NO_HZ_IDLE = kernel.yes;
 
           # Optimize for x86_64v3 CPU's (will update accordingly for my hardware)
           GENERIC_CPU = kernel.yes;
