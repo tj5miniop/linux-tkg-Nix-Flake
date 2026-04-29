@@ -28,12 +28,18 @@
       };
 
     in {
-      #Provide the full Package
-      packages.${system}.default = pkgs.linuxPackagesFor zenplus;
+      packages.${system} = {
+        # Point to the kernel derivation
+        linux-zenplus = zenplus;
+        # Make the kernel the default build target
+        default = self.packages.${system}.linux-zenplus;
+        # Export the full package set for kernel modules
+        zenplusPackages = pkgs.linuxPackagesFor zenplus;
+      };
 
-      # Create the Overlay for NixOS
       overlays.default = final: prev: {
         linuxPackages_zenplus = pkgs.linuxPackagesFor zenplus;
       };
+    };
     };
 }
