@@ -37,8 +37,26 @@
         ];
 
         structuredExtraConfig = with pkgs.lib.kernel; {
-          SCHED_BORE = yes;
+          # SCHED CONFIG
+          SCHED_BORE = kernel.yes;
           SCHED_AUTOGROUP = pkgs.lib.mkForce no;
+          # Cachy Optimisations
+          CACHY = kernel.yes;
+          MQ_IOSCHED_ADIOS = kernel.yes;
+          # PREEMPT
+          PREEMPT_DYNAMIC = kernel.yes;
+          HZ_1000 = kernel.yes; #Tick Rate - Similar to TKG kernel config
+          HZ = kernel.freeform "1000";
+          NO_HZ_IDLE = kernel.yes
+
+          # Optimize for x86_64v3 CPU's (will update accordingly for my hardware)
+          GENERIC_CPU = kernel.yes;
+          X86_64_VERSION = kernel.freeform "3";
+
+          # Memory Management
+          TRANSPARENT_HUGEPAGE_ALWAYS = kernel.yes;
+
+          
         };
 
         ignoreConfigErrors = true;
