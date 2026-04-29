@@ -1,5 +1,5 @@
 {
-  description = "Linux-TKG Kernel Flake with BORE Scheduler and Linux Gaming Patches";
+  description = "Custom Build of the NixOS zen kernel made to be more like the TKG kernel with appropriate patches";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -10,46 +10,42 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
-      tkgKernel = pkgs.linux_latest.override {
-        argsOverride = rec {
-          name = "linux-tkg";
-          version = "7.0.2";
-          src = pkgs.fetchurl {
-            url = "https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-${version}.tar.xz";
-            sha256 = "53591a03294527a48ccb0b9e559e922df8a38554745a1206827ca751d2ca7662";
-          };
-        };
-
+      # Rename to zenplus and use linux_zen as the base
+      zenplus = pkgs.linux_zen.override {
         kernelPatches = [
-          #{
-            #name = "Cachy BORE";
-            #patch = ./patches/0001-bore-cachy.patch;
-          #}
           {
-            name = "Cgroup-VRAM";
-            patch = "./patches/0001-cgroup-vram.patch";
+            name = "BORE"
+            patch = "./patches/bore.patch"
           }
           {
-            name = "glitched-base";
-            patch = "./patches/0003-glitched-base.patch";
+            name = "cgroup-vram";
+            patch = ./patches/0001-cgroup-vram.patch;
           }
-          # Add further patches IN ORDER OF PATCHES
+          {
+            name = "glitched-base"; # From TKG
+            patch = ./patches/0003-glitched-base.patch;
+          }
         ];
+
         structuredExtraConfig = with pkgs.lib.kernel; {
-          # SCHED CONFIG
+          # BORE Scheduler
           SCHED_BORE = yes;
           SCHED_AUTOGROUP = pkgs.lib.mkForce no;
-          # Cachy Optimisations
+
+          # Cachy/Gaming Optimizations
           CACHY = yes;
           MQ_IOSCHED_ADIOS = yes;
-          # PREEMPT
+
+          # Timing & Preemption
           PREEMPT_DYNAMIC = yes;
-          HZ_1000 = yes; #Tick Rate - Similar to TKG kernel config
+          HZ_1000 = yes;
           HZ = freeform "1000";
           NO_HZ_IDLE = yes;
-          # Optimize for x86_64v3 CPU's (will update accordingly for my hardware)
-          GENERIC_CPU = yes;
+
+          # CPU Architecture Optimization (x86_64-v3)
+          GENERIC_CPU = no; # Disable generic to ensure version-specific optimization
           X86_64_VERSION = freeform "3";
+
           # Memory Management
           TRANSPARENT_HUGEPAGE_ALWAYS = pkgs.lib.mkForce yes;
         };
@@ -58,10 +54,12 @@
       };
 
     in {
-      packages.${system}.default = tkgKernel;
+      # Output the raw kernel
+      packages.${system}.default = zenplus;
 
+      # The overlay allows you to use 'pkgs.linuxPackages_zenplus' in your NixOS configuration
       overlays.default = final: prev: {
-        linuxPackages_tkg = prev.linuxPackagesFor tkgKernel;
+        linuxPackages_zenplus = prev.linuxPackagesFor zenplus;
       };
     };
 }
