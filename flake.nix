@@ -40,7 +40,7 @@
           SCHED_BORE = yes;
           SCHED_AUTOGROUP = pkgs.lib.mkForce no;
           # Cachy Optimisations
-          CACHY = tkgKernel.yes;
+          CACHY = yes;
           MQ_IOSCHED_ADIOS = yes;
           # PREEMPT
           PREEMPT_DYNAMIC = yes;
