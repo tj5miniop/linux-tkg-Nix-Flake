@@ -1,6 +1,6 @@
-# Linux TKG Nix Flake
+# Kernel "Zenplus" - A Nix OS Kernel Flake, adding onto the Zen Kernel
 
-#### A personal flake for NixOS which supplies the TKG kernel along with patches from the Linux Gaming Community
+#### A personal flake for NixOS which supplies the Zen kernel from nixos-unstable along with patches from the Linux Gaming Community; automatically pushes to Cachix
 
 # Credits
 
