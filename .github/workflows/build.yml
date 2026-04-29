@@ -36,5 +36,30 @@ jobs:
           commit_message: "chore: (Automated) update flake.lock"
           push_options: '--force-with-lease'
 
+      - name: Get Kernel Version and Date
+        id: meta
+        run: |
+          # Extract version from Nix (adjust attribute path if necessary)
+          KVER=$(nix eval .#linux.version --raw)
+          # Get current date
+          DATE=$(date +'%Y-%m-%d')
+          
+          echo "version=${KVER}" >> $GITHUB_OUTPUT
+          echo "date=${DATE}" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: (Automated) update to ${{ steps.meta.outputs.version }} (${{ steps.meta.outputs.date }})"
+          file_pattern: 'flake.lock'
+          push_options: '--force-with-lease'
+
       - name: Create Release
-        run: gh release create --generate-release-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG_NAME="v${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.date }}"
+          gh release create "$TAG_NAME" \
+            --title "Kernel ${{ steps.meta.outputs.version }} (${{ steps.meta.outputs.date }})" \
+            --notes "Automated build of Linux ZenPlus. Includes latest upstream changes and applied patches as of ${{ steps.meta.outputs.date }}." \
+            ./result/bzImage # Optional: Attach the actual kernel binary to the release
