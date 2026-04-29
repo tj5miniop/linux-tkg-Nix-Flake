@@ -15,15 +15,15 @@
         kernelPatches = [
           {
             name = "BORE";
-            patch = "patches/bore.patch";
+            patch = .patches/bore.patch;
           }
           {
             name = "cgroup-vram";
-            patch = patches/cgroup-vram.patch;
+            patch = ./patches/cgroup-vram.patch;
           }
           {
             name = "glitched-base"; # From TKG
-            patch = patches/glitched-base.patch;
+            patch = ./patches/glitched-base.patch;
           }
         ];
 
