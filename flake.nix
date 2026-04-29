@@ -51,7 +51,7 @@
           GENERIC_CPU = yes;
           X86_64_VERSION = freeform "3";
           # Memory Management
-          TRANSPARENT_HUGEPAGE_ALWAYS = yes;
+          TRANSPARENT_HUGEPAGE_ALWAYS = lib.mkForce value.yes;
         };
 
         ignoreConfigErrors = true;
