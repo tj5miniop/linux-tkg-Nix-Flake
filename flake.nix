@@ -1,5 +1,5 @@
 {
-  description = "Linux-TKG Kernel Flake with BORE & CachyOS patches";
+  description = "Linux-TKG Kernel Flake with BORE Scheduler and Linux Gaming Patches";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -22,16 +22,16 @@
 
         kernelPatches = [
           {
-            name = "bore-scheduler";
+            name = "Cachy BORE";
             patch = ./patches/0001-bore-cachy.patch;
           }
           {
-            name = "Cachy BORE";
-            patch = "./patches/0001-bore.patch";
+            name = "Cgroup-VRAM";
+            patch = "./patches/0001-cgroup-vram.patch";
           }
           {
-            name = "Cgroup-VRAM";
-            patch = "./patches/001-cgroup-vram.patch";
+            name = "glitched-base";
+            patch = "./patches/0003-glitched-base.patch";
           }
           # Add further patches manually to ensure strict application order
         ];
