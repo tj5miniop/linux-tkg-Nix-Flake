@@ -27,7 +27,7 @@ jobs:
         run: nix flake update
 
       - name: Build Linux Kernel
-        run: nix build . --print-build-logs # For debug
+        run: nix build . --print-build-logs --cores 0 --max-jobs 1 # Use all cores, hopefully speeding up builds
 
       - name: Commit changes
         if: success()
