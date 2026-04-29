@@ -19,11 +19,11 @@
           }
           {
             name = "cgroup-vram";
-            patch = ./patches/0001-cgroup-vram.patch;
+            patch = ./patches/cgroup-vram.patch;
           }
           {
             name = "glitched-base"; # From TKG
-            patch = ./patches/0003-glitched-base.patch;
+            patch = ./patches/glitched-base.patch;
           }
         ];
 
@@ -32,9 +32,9 @@
           SCHED_BORE = yes;
           SCHED_AUTOGROUP = pkgs.lib.mkForce no;
 
-          # Cachy/Gaming Optimizations
-          CACHY = yes;
-          MQ_IOSCHED_ADIOS = yes;
+          # Cachy/Gaming Optimizations - patch not in yet
+          #CACHY = yes;
+          #MQ_IOSCHED_ADIOS = yes;
 
           # Timing & Preemption
           PREEMPT_DYNAMIC = yes;
@@ -57,7 +57,7 @@
       # Output the raw kernel
       packages.${system}.default = zenplus;
 
-      # The overlay allows you to use 'pkgs.linuxPackages_zenplus' in your NixOS configuration
+      # The allows the use of 'pkgs.linuxPackages_zenplus' in your NixOS configuration
       overlays.default = final: prev: {
         linuxPackages_zenplus = prev.linuxPackagesFor zenplus;
       };
