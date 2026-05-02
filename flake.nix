@@ -23,9 +23,9 @@
           HZ_1000 = yes;
           HZ = freeform "1000";
           CACHY = yes;
-          GENERIC_CPU = no;
-          MZEN4 = yes;
-          X86_NATIVE_CPU = no;
+          #GENERIC_CPU = no;
+          #MZEN4 = yes;
+          #X86_NATIVE_CPU = no;
         };
         ignoreConfigErrors = true;
       };
