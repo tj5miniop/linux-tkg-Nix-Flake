@@ -19,10 +19,14 @@
         ];
         structuredExtraConfig = with pkgs.lib.kernel; {
           SCHED_BORE = yes;
-          PREEMPT_DYNAMIC = yes;
+          PREEMPT_DYNAMIC = yes;          
           HZ_1000 = yes;
           HZ = freeform "1000";
-          X86_64_VERSION = freeform "3";
+          CACHY = yes;
+          # Build for Zenver4 CPUs
+          GENERIC_CPU = no;
+          MZEN4 = yes;
+          X86_NATIVE_CPU = no;
         };
         ignoreConfigErrors = true;
       };
